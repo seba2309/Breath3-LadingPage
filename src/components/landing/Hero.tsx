@@ -37,8 +37,8 @@ export default function Hero() {
           </Text>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.btnPrimary}>
-              <FontAwesome5 name="apple" size={18} color="#fff" />
-              <Text style={styles.btnPrimaryText}>App Store</Text>
+              <FontAwesome5 name="download" size={18} color="#fff" />
+              <Text style={styles.btnPrimaryText}>Descargar</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.btnLink}>
               <Text style={styles.btnLinkText}>Explorar funciones</Text>
