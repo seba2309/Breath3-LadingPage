@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import Logo from './Logo'; // <-- Importamos tu logo pro
 
 export default function Footer() {
   const { width } = useWindowDimensions();
@@ -11,12 +11,10 @@ export default function Footer() {
       <View style={[styles.container, isTabletOrDesktop && styles.containerLarge]}>
         
         <View style={styles.brandContainer}>
-          <LinearGradient
-            colors={['#7e22ce', '#4c1d95']}
-            style={styles.logoIcon}
-          >
-            <Text style={styles.logoIconText}>B</Text>
-          </LinearGradient>
+          {/* Aquí insertamos el logo SVG adaptado al tamaño del footer */}
+          <View style={styles.logoIcon}>
+            <Logo width={28} height={28} />
+          </View>
           <Text style={styles.brandName}>Breath3</Text>
           <Text style={styles.copyright}>© {new Date().getFullYear()}</Text>
         </View>
@@ -60,14 +58,8 @@ const styles = StyleSheet.create({
   logoIcon: {
     width: 28,
     height: 28,
-    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  logoIconText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-    fontSize: 12,
   },
   brandName: {
     fontWeight: '600',

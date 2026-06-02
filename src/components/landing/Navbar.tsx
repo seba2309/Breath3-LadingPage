@@ -6,43 +6,59 @@ import {
   StyleSheet, 
   useWindowDimensions 
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import Logo from './Logo'; 
+import { useTheme } from '../../context/ThemeContext'; // <-- 1. Importamos el gancho del tema
 
 export default function Navbar() {
   const { width } = useWindowDimensions();
-  // Equivalente a md: de Tailwind (pantallas mayores a 768px)
   const isTabletOrDesktop = width >= 768;
+
+  // 2. Extraemos el estado actual y la función para cambiarlo
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   return (
     <View style={styles.header}>
       <View style={styles.container}>
-        <View style={styles.nav}>
+        {/* 3. Aplicamos fondo dinámico al contenedor de navegación */}
+        <View style={[styles.nav, isDarkMode ? styles.navDark : styles.navLight]}>
           
           {/* Logo y Nombre */}
           <TouchableOpacity style={styles.logoContainer}>
-            <LinearGradient
-              colors={['#7e22ce', '#4c1d95']} // Degradado del icono
-              style={styles.logoIcon}
-            >
-              <Text style={styles.logoIconText}>B</Text>
-            </LinearGradient>
-            <Text style={styles.brandName}>Breath3</Text>
+            <View style={styles.logoIcon}>
+              <Logo width={32} height={32} />
+            </View>
+            {/* Texto dinámico para el nombre */}
+            <Text style={[styles.brandName, isDarkMode ? styles.textWhite : styles.textDark]}>
+              Breath3
+            </Text>
           </TouchableOpacity>
 
           {/* Enlaces de Navegación (Se ocultan en móviles) */}
           {isTabletOrDesktop && (
             <View style={styles.linksContainer}>
-              <TouchableOpacity><Text style={styles.navLink}>Características</Text></TouchableOpacity>
-              <TouchableOpacity><Text style={styles.navLink}>Cómo funciona</Text></TouchableOpacity>
-              <TouchableOpacity><Text style={styles.navLink}>Precios</Text></TouchableOpacity>
-              <TouchableOpacity><Text style={styles.navLink}>FAQ</Text></TouchableOpacity>
+              <TouchableOpacity><Text style={[styles.navLink, isDarkMode && styles.navLinkDark]}>Características</Text></TouchableOpacity>
+              <TouchableOpacity><Text style={[styles.navLink, isDarkMode && styles.navLinkDark]}>Cómo funciona</Text></TouchableOpacity>
+              <TouchableOpacity><Text style={[styles.navLink, isDarkMode && styles.navLinkDark]}>Precios</Text></TouchableOpacity>
+              <TouchableOpacity><Text style={[styles.navLink, isDarkMode && styles.navLinkDark]}>FAQ</Text></TouchableOpacity>
             </View>
           )}
 
-          {/* Botón Descargar */}
-          <TouchableOpacity style={styles.downloadButton}>
-            <Text style={styles.downloadButtonText}>Descargar</Text>
-          </TouchableOpacity>
+          {/* Acciones del lado derecho (Botón Tema + Botón Descargar) */}
+          <View style={styles.rightActions}>
+            
+            {/* 4. BOTÓN INTERRUPTOR DE MODO OSCURO */}
+            <TouchableOpacity onPress={toggleDarkMode} style={styles.themeButton}>
+              <Text style={styles.themeButtonText}>{isDarkMode ? '☀️' : '🌙'}</Text>
+            </TouchableOpacity>
+
+            {/* Botón Descargar con color adaptativo */}
+            <TouchableOpacity style={[styles.downloadButton, isDarkMode ? styles.downloadButtonDark : styles.downloadButtonLight]}>
+              <Text style={[styles.downloadButtonText, isDarkMode ? styles.textDark : styles.textWhite]}>
+                Descargar
+              </Text>
+            </TouchableOpacity>
+            
+          </View>
           
         </View>
       </View>
@@ -52,7 +68,7 @@ export default function Navbar() {
 
 const styles = StyleSheet.create({
   header: {
-    position: 'fixed' as any, // <-- El truco mágico para que flote en la web
+    position: 'fixed' as any,
     top: 0,
     left: 0,
     right: 0,
@@ -61,7 +77,7 @@ const styles = StyleSheet.create({
   container: {
     alignSelf: 'center',
     width: '100%',
-    maxWidth: 1152, // max-w-6xl
+    maxWidth: 1152,
     paddingHorizontal: 16,
     marginTop: 16,
   },
@@ -69,17 +85,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)', // Efecto glass
     borderRadius: 50,
     borderWidth: 1,
-    borderColor: 'rgba(226, 232, 240, 0.6)', // border-border/60
     paddingHorizontal: 20,
     paddingVertical: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    elevation: 2, // Sombra sutil
+    elevation: 2,
+  },
+  // Fondos adaptativos para la barra de navegación
+  navLight: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderColor: 'rgba(226, 232, 240, 0.6)',
+  },
+  navDark: {
+    backgroundColor: 'rgba(15, 23, 42, 0.9)', // slate-900 con opacidad
+    borderColor: 'rgba(51, 65, 85, 0.5)',     // slate-700 sutil
   },
   logoContainer: {
     flexDirection: 'row',
@@ -89,20 +112,20 @@ const styles = StyleSheet.create({
   logoIcon: {
     width: 32,
     height: 32,
-    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  logoIconText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-    fontSize: 16,
   },
   brandName: {
     fontWeight: '600',
     letterSpacing: -0.5,
     fontSize: 16,
-    color: '#0f172a',
+  },
+  // Colores de texto adaptativos
+  textDark: {
+    color: '#0f172a', // slate-900
+  },
+  textWhite: {
+    color: '#f8fafc', // slate-50
   },
   linksContainer: {
     flexDirection: 'row',
@@ -111,18 +134,43 @@ const styles = StyleSheet.create({
   },
   navLink: {
     fontSize: 14,
-    color: '#64748b',
+    color: '#64748b', // slate-500
     fontWeight: '500',
   },
+  navLinkDark: {
+    color: '#94a3b8', // slate-400
+  },
+  rightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  // Estilos del nuevo botón de cambio de tema
+  themeButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+  },
+  themeButtonText: {
+    fontSize: 18,
+  },
   downloadButton: {
-    backgroundColor: '#0f172a', // text-foreground / botones oscuros
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 50,
   },
+  downloadButtonLight: {
+    backgroundColor: '#0f172a',
+  },
+  downloadButtonDark: {
+    backgroundColor: '#f8fafc',
+  },
   downloadButtonText: {
-    color: '#ffffff',
     fontSize: 14,
     fontWeight: '500',
   },
 });
+
